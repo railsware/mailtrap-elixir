@@ -25,7 +25,8 @@ defmodule Mailtrap.MixProject do
       {:tesla, "~> 1.5"},
       {:hackney, "~> 1.18"},
       {:jason, ">= 1.0.0"},
-      {:ex_machina, "~> 2.7", only: :test}
+      {:ex_machina, "~> 2.7", only: :test},
+      {:ex_doc, "~> 0.27", only: :dev, runtime: false}
     ]
   end
 

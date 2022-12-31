@@ -27,8 +27,8 @@ defmodule MailtrapTest do
 
   test "list account accesses" do
     account_accesses = [
-      build(:account_access),
-      build(:account_access, %{specifier_type: "Invite"})
+      build(:account_access, %{id: 100}),
+      build(:account_access, %{id: 101, specifier_type: "Invite"})
     ]
 
     mock(fn
@@ -48,6 +48,38 @@ defmodule MailtrapTest do
                "specifier_type" => "Invite"
              }
            ] = account_accesses
+  end
+
+  test "filter account accesses" do
+    account_accesses = [
+      build(:account_access, %{id: 100}),
+      build(:account_access, %{id: 101, specifier_type: "Invite"})
+    ]
+
+    mock(fn
+      %{
+        method: :get,
+        url: "https://mailtrap.io/api/accounts/12345/account_accesses",
+        query: [
+          project_ids: [10, 11, 12]
+        ]
+      } ->
+        json(account_accesses)
+    end)
+
+    assert {:ok, account_accesses} = Mailtrap.account_accesses(12345, project_ids: [10, 11, 12])
+
+    assert [
+             %{
+               "id" => 100,
+               "specifier_type" => "User"
+             },
+             %{
+               "id" => 101,
+               "specifier_type" => "Invite"
+             }
+           ] = account_accesses
+
   end
 
   # test "delete account access" do

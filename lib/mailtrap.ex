@@ -5,14 +5,24 @@ defmodule Mailtrap do
 
   @doc """
   List accounts
+
+  ## Example
+
+      Mailtrap.accounts()
   """
   def accounts() do
     client() |> Tesla.get("/accounts") |> handle_response()
   end
 
-  def account_accesses(account_id, project_ids \\ [], inbox_ids \\ []) do
+  @doc """
+  List accounts
+  """
+  def account_accesses(account_id, query \\ []) do
     client()
-    |> Tesla.get("/accounts/" <> to_string(account_id) <> "/account_accesses")
+    |> Tesla.get(
+      "/accounts/" <> to_string(account_id) <> "/account_accesses",
+      query: query
+    )
     |> handle_response()
   end
 
