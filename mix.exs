@@ -7,7 +7,8 @@ defmodule Mailtrap.MixProject do
       version: "0.1.0",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      elixirc_paths: elixirc_paths(Mix.env())
     ]
   end
 
@@ -21,8 +22,14 @@ defmodule Mailtrap.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:tesla, "~> 1.5"},
+      {:hackney, "~> 1.18"},
+      {:jason, ">= 1.0.0"},
+      {:ex_machina, "~> 2.7", only: :test}
     ]
   end
+
+  defp elixirc_paths(:test), do: elixirc_paths() ++ ["test/support"]
+  defp elixirc_paths(_), do: elixirc_paths()
+  defp elixirc_paths(), do: ["lib"]
 end
