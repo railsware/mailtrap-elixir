@@ -18,10 +18,10 @@ defmodule MailtrapTest do
   test "list accounts" do
     mock(fn
       %{method: :get, url: "https://mailtrap.io/api/accounts"} ->
-        json([%{"access_levels" => [100], "id" => 11111, "name" => "John Doe"}])
+        json([%{"access_levels" => [100], "id" => 11_111, "name" => "John Doe"}])
     end)
 
-    assert {:ok, [%{"name" => "John Doe", "id" => 11111, "access_levels" => [100]}]} =
+    assert {:ok, [%{"name" => "John Doe", "id" => 11_111, "access_levels" => [100]}]} =
              Mailtrap.accounts()
   end
 
@@ -36,7 +36,7 @@ defmodule MailtrapTest do
         json(account_accesses)
     end)
 
-    assert {:ok, account_accesses} = Mailtrap.account_accesses(12345)
+    assert {:ok, account_accesses} = Mailtrap.account_accesses(12_345)
 
     assert [
              %{
@@ -67,7 +67,7 @@ defmodule MailtrapTest do
         json(account_accesses)
     end)
 
-    assert {:ok, account_accesses} = Mailtrap.account_accesses(12345, project_ids: [10, 11, 12])
+    assert {:ok, account_accesses} = Mailtrap.account_accesses(12_345, project_ids: [10, 11, 12])
 
     assert [
              %{
@@ -79,7 +79,6 @@ defmodule MailtrapTest do
                "specifier_type" => "Invite"
              }
            ] = account_accesses
-
   end
 
   # test "delete account access" do
