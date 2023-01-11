@@ -8,6 +8,7 @@ defmodule Mailtrap.MixProject do
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      package: package(),
       elixirc_paths: elixirc_paths(Mix.env())
     ]
   end
@@ -29,6 +30,15 @@ defmodule Mailtrap.MixProject do
       {:ex_doc, "~> 0.27", only: :dev, runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
+    ]
+  end
+
+  defp package do
+    [
+      description: "Mailtrap Sandbox and Sending API client. Mailtrap adapter for Bamboo",
+      maintainers: ["Kalys Osmonov <kalys@osmonov.com>"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/kalys/mailtrap"}
     ]
   end
 
