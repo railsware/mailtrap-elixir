@@ -3,6 +3,7 @@ defmodule Mailtrap.Email do
   Contains functions for composing email
   """
 
+  alias Mailtrap.Email.Mailbox
   # @type t :: %__MODULE__{
   #         FromEmailAddress: String.t() | nil,
   #         FromEmailAddressIdentityArn: String.t() | nil,
@@ -17,7 +18,9 @@ defmodule Mailtrap.Email do
   #       }
   @type t :: %__MODULE__{
           subject: String.t(),
-          text: String.t() | nil
+          text: String.t() | nil,
+          from: Mailbox.t(),
+          to: [Mailbox.t(), ...]
         }
 
   defstruct from: nil,
@@ -56,21 +59,26 @@ defmodule Mailtrap.Email do
   """
   @spec put_from(__MODULE__.t(), String.t() | nil, String.t()) :: __MODULE__.t()
   def put_from(email, name, address) do
-    %__MODULE__{email | from: Mailtrap.Email.Mailbox.build(name, address)}
+    %__MODULE__{email | from: Mailbox.build(name, address)}
   end
 
-  def put_to(email, to) do
-    %__MODULE__{email | to: to}
-  end
+  @doc """
+  Puts recepient or list of recepients to the email struct
 
-  # ConfigurationSetName: nil,
-  # to: %Destination{},
-  # ReplyToAddresses: [],
-  # Content: %Content{},
-  # FeedbackForwardingEmailAddress: nil,
-  # FeedbackForwardingEmailAddressIdentityArn: nil,
-  # ListManagementOptions: nil,
-  # EmailTags: nil
+  ## Examples
+    iex> Mailtrap.Email.put_to(%Mailtrap.Email{}, "Jane", "jane.doe@example.org")
+    %Mailtrap.Email{to: [%Mailtrap.Email.Mailbox{name: "Jane", email: "jane.doe@example.org"}]}
+
+    iex> Mailtrap.Email.put_to(%Mailtrap.Email{}, [{"Jane", "jane.doe@example.org"}, {"John", "john.doe@example.org"}])
+    %Mailtrap.Email{to: [%Mailtrap.Email.Mailbox{name: "Jane", email: "jane.doe@example.org"}, %Mailtrap.Email.Mailbox{name: "John", email: "john.doe@example.org"}]}
+  """
+  @spec put_to(__MODULE__.t(), String.t() | nil, String.t()) :: __MODULE__.t()
+  @spec put_to(__MODULE__.t(), [tuple(), ...]) :: __MODULE__.t()
+  def put_to(email, name, address), do: put_to(email, [{name, address}])
+  def put_to(email, list) do
+    mailboxes = Enum.map(list, fn {name, address} -> Mailbox.build(name, address) end)
+    %__MODULE__{email | to: mailboxes}
+  end
 end
 
 defimpl Jason.Encoder, for: [Mailtrap.Email] do
