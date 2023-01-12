@@ -17,7 +17,11 @@ defmodule MailtrapSandboxTest do
 
   test "sending" do
     body =
-      Jason.encode!(%{subject: "Hello", from: %{email: "john.doe@example.com", name: "John Doe"}})
+      Jason.encode!(%{
+        subject: "Hello",
+        from: %{email: "john.doe@example.com", name: "John Doe"},
+        to: []
+      })
 
     mock(fn
       %{method: :post, url: "https://sandbox.api.mailtrap.io/api/send/111", body: ^body} ->
@@ -27,8 +31,7 @@ defmodule MailtrapSandboxTest do
     response =
       %Email{}
       |> Email.put_subject("Hello")
-      |> Email.put_from(%{name: "John Doe", email: "john.doe@example.com"})
-      |> Email.put_
+      |> Email.put_from("John Doe", "john.doe@example.com")
       |> Mailtrap.Sandbox.send(111)
 
     assert {:ok, %{"message_ids" => ["1", "2"], "success" => true}} = response

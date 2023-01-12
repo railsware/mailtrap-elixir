@@ -13,13 +13,13 @@ defmodule Mailtrap.Sandbox do
 
 
 
-email = %Mailtrap.Email{
+  email = %Mailtrap.Email{
   from: %{email: "kalys@osmonov.com", name: "Kalys Osmonov"},
   to: [%{email: "azem@osmonova.com", name: "Azem Osmonova"}],
   subject: "Hello",
   text: "bla bla"
-}
-Mailtrap.Sandbox.send(email, 2048945)
+  }
+  Mailtrap.Sandbox.send(email, 2048945)
   """
 
   use Tesla
@@ -28,8 +28,8 @@ Mailtrap.Sandbox.send(email, 2048945)
   plug(Tesla.Middleware.JSON)
   plug(Tesla.Middleware.BaseUrl, "https://sandbox.api.mailtrap.io/api")
   # plug(Tesla.Middleware.BearerAuth, token: Application.get_env(:mailtrap, :api_token))
-  plug Tesla.Middleware.Headers, [{"Api-Token", Application.get_env(:mailtrap, :api_token)}]
-  plug Tesla.Middleware.Logger, log_level: :debug
+  plug(Tesla.Middleware.Headers, [{"Api-Token", Application.get_env(:mailtrap, :api_token)}])
+  # plug(Tesla.Middleware.Logger, log_level: :debug)
 
   def send(email, inbox_id) do
     post("send/" <> Integer.to_string(inbox_id), email)
