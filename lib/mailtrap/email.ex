@@ -21,11 +21,15 @@ defmodule Mailtrap.Email do
           text: String.t() | nil,
           html: String.t() | nil,
           from: Mailbox.t(),
-          to: [Mailbox.t(), ...]
+          to: [Mailbox.t(), ...],
+          cc: [Mailbox.t(), ...],
+          bcc: [Mailbox.t(), ...],
         }
 
   defstruct from: nil,
-            to: [],
+            to: nil,
+            cc: nil,
+            bcc: nil,
             subject: nil,
             text: nil,
             html: nil
@@ -93,6 +97,44 @@ defmodule Mailtrap.Email do
   def put_to(email, list) do
     mailboxes = Enum.map(list, fn {name, address} -> Mailbox.build(name, address) end)
     %__MODULE__{email | to: mailboxes}
+  end
+
+  @doc """
+  Puts carbon copy recepient or list of carbon copy recepients to the email struct
+
+  ## Examples
+    iex> Mailtrap.Email.put_cc(%Mailtrap.Email{}, "Jane", "jane.doe@example.org")
+    %Mailtrap.Email{cc: [%Mailtrap.Email.Mailbox{name: "Jane", email: "jane.doe@example.org"}]}
+
+    iex> Mailtrap.Email.put_cc(%Mailtrap.Email{}, [{"Jane", "jane.doe@example.org"}, {"John", "john.doe@example.org"}])
+    %Mailtrap.Email{cc: [%Mailtrap.Email.Mailbox{name: "Jane", email: "jane.doe@example.org"}, %Mailtrap.Email.Mailbox{name: "John", email: "john.doe@example.org"}]}
+  """
+  @spec put_cc(__MODULE__.t(), String.t() | nil, String.t()) :: __MODULE__.t()
+  @spec put_cc(__MODULE__.t(), [tuple(), ...]) :: __MODULE__.t()
+  def put_cc(email, name, address), do: put_cc(email, [{name, address}])
+
+  def put_cc(email, list) do
+    mailboxes = Enum.map(list, fn {name, address} -> Mailbox.build(name, address) end)
+    %__MODULE__{email | cc: mailboxes}
+  end
+
+  @doc """
+  Puts blind carbon copy recepient or list of blind carbon copy recepients to the email struct
+
+  ## Examples
+    iex> Mailtrap.Email.put_bcc(%Mailtrap.Email{}, "Jane", "jane.doe@example.org")
+    %Mailtrap.Email{bcc: [%Mailtrap.Email.Mailbox{name: "Jane", email: "jane.doe@example.org"}]}
+
+    iex> Mailtrap.Email.put_bcc(%Mailtrap.Email{}, [{"Jane", "jane.doe@example.org"}, {"John", "john.doe@example.org"}])
+    %Mailtrap.Email{bcc: [%Mailtrap.Email.Mailbox{name: "Jane", email: "jane.doe@example.org"}, %Mailtrap.Email.Mailbox{name: "John", email: "john.doe@example.org"}]}
+  """
+  @spec put_bcc(__MODULE__.t(), String.t() | nil, String.t()) :: __MODULE__.t()
+  @spec put_bcc(__MODULE__.t(), [tuple(), ...]) :: __MODULE__.t()
+  def put_bcc(email, name, address), do: put_bcc(email, [{name, address}])
+
+  def put_bcc(email, list) do
+    mailboxes = Enum.map(list, fn {name, address} -> Mailbox.build(name, address) end)
+    %__MODULE__{email | bcc: mailboxes}
   end
 end
 
