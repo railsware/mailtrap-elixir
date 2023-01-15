@@ -19,6 +19,7 @@ defmodule Mailtrap.Email do
   @type t :: %__MODULE__{
           subject: String.t(),
           text: String.t() | nil,
+          html: String.t() | nil,
           from: Mailbox.t(),
           to: [Mailbox.t(), ...]
         }
@@ -26,7 +27,8 @@ defmodule Mailtrap.Email do
   defstruct from: nil,
             to: [],
             subject: nil,
-            text: nil
+            text: nil,
+            html: nil
 
   @doc """
   Puts subject to the email struct
@@ -48,6 +50,18 @@ defmodule Mailtrap.Email do
   @spec put_text(__MODULE__.t(), String.t()) :: __MODULE__.t()
   def put_text(email, text) do
     %__MODULE__{email | text: text}
+  end
+
+  @doc """
+  Puts html to the email struct
+
+  ## Examples
+    iex> Mailtrap.Email.put_html(%Mailtrap.Email{}, "<strong>Hello, Jane</strong>")
+    %Mailtrap.Email{html: "<strong>Hello, Jane</strong>"}
+  """
+  @spec put_html(__MODULE__.t(), String.t()) :: __MODULE__.t()
+  def put_html(email, html) do
+    %__MODULE__{email | html: html}
   end
 
   @doc """
@@ -75,6 +89,7 @@ defmodule Mailtrap.Email do
   @spec put_to(__MODULE__.t(), String.t() | nil, String.t()) :: __MODULE__.t()
   @spec put_to(__MODULE__.t(), [tuple(), ...]) :: __MODULE__.t()
   def put_to(email, name, address), do: put_to(email, [{name, address}])
+
   def put_to(email, list) do
     mailboxes = Enum.map(list, fn {name, address} -> Mailbox.build(name, address) end)
     %__MODULE__{email | to: mailboxes}
