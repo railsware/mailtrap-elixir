@@ -24,7 +24,8 @@ defmodule Mailtrap.Email do
           to: [Mailbox.t(), ...],
           cc: [Mailbox.t(), ...],
           bcc: [Mailbox.t(), ...],
-          category: nil
+          category: String.t() | nil,
+          custom_variables: map() | nil
         }
 
   defstruct from: nil,
@@ -34,7 +35,8 @@ defmodule Mailtrap.Email do
             subject: nil,
             text: nil,
             html: nil,
-            category: nil
+            category: nil,
+            custom_variables: nil
 
   @doc """
   Puts subject to the email struct
@@ -68,6 +70,22 @@ defmodule Mailtrap.Email do
   @spec put_category(__MODULE__.t(), String.t()) :: __MODULE__.t()
   def put_category(email, category) do
     %__MODULE__{email | category: category}
+  end
+
+  @doc """
+  Puts custom_variables to the email struct.
+
+  Values that are specific to the entire send that will be carried along with
+  the email and its activity data.
+  Total size of custom variables in JSON form must not exceed 1000 bytes.
+
+  ## Examples
+    iex> Mailtrap.Email.put_custom_variables(%Mailtrap.Email{}, %{foo: "bar"})
+    %Mailtrap.Email{custom_variables: %{foo: "bar"}}
+  """
+  @spec put_custom_variables(__MODULE__.t(), map()) :: __MODULE__.t()
+  def put_custom_variables(email, custom_variables) do
+    %__MODULE__{email | custom_variables: custom_variables}
   end
 
   @doc """
