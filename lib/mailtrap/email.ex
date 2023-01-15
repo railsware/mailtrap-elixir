@@ -24,6 +24,7 @@ defmodule Mailtrap.Email do
           to: [Mailbox.t(), ...],
           cc: [Mailbox.t(), ...],
           bcc: [Mailbox.t(), ...],
+          category: nil
         }
 
   defstruct from: nil,
@@ -32,7 +33,8 @@ defmodule Mailtrap.Email do
             bcc: nil,
             subject: nil,
             text: nil,
-            html: nil
+            html: nil,
+            category: nil
 
   @doc """
   Puts subject to the email struct
@@ -54,6 +56,18 @@ defmodule Mailtrap.Email do
   @spec put_text(__MODULE__.t(), String.t()) :: __MODULE__.t()
   def put_text(email, text) do
     %__MODULE__{email | text: text}
+  end
+
+  @doc """
+  Puts category to the email struct
+
+  ## Examples
+    iex> Mailtrap.Email.put_category(%Mailtrap.Email{}, "Marketing")
+    %Mailtrap.Email{category: "Marketing"}
+  """
+  @spec put_category(__MODULE__.t(), String.t()) :: __MODULE__.t()
+  def put_category(email, category) do
+    %__MODULE__{email | category: category}
   end
 
   @doc """
