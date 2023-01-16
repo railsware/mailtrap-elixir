@@ -4,18 +4,8 @@ defmodule Mailtrap.Email do
   """
 
   alias Mailtrap.Email.Mailbox
-  # @type t :: %__MODULE__{
-  #         FromEmailAddress: String.t() | nil,
-  #         FromEmailAddressIdentityArn: String.t() | nil,
-  #         ConfigurationSetName: String.t() | nil,
-  #         Destination: Destination.t(),
-  #         ReplyToAddresses: [Bamboo.Email.address()],
-  #         Content: Content.t(),
-  #         FeedbackForwardingEmailAddress: String.t() | nil,
-  #         FeedbackForwardingEmailAddressIdentityArn: String.t() | nil,
-  #         ListManagementOptions: map() | nil,
-  #         EmailTags: nonempty_list(map()) | nil
-  #       }
+  alias Mailtrap.Email.Attachment
+
   @type t :: %__MODULE__{
           subject: String.t(),
           text: String.t() | nil,
@@ -25,7 +15,9 @@ defmodule Mailtrap.Email do
           cc: [Mailbox.t(), ...],
           bcc: [Mailbox.t(), ...],
           category: String.t() | nil,
-          custom_variables: map() | nil
+          custom_variables: map() | nil,
+          headers: map() | nil,
+          attachments: [Attachment.t(), ...]
         }
 
   defstruct from: nil,
@@ -36,7 +28,9 @@ defmodule Mailtrap.Email do
             text: nil,
             html: nil,
             category: nil,
-            custom_variables: nil
+            custom_variables: nil,
+            headers: nil,
+            attachments: nil
 
   @doc """
   Puts subject to the email struct
@@ -86,6 +80,23 @@ defmodule Mailtrap.Email do
   @spec put_custom_variables(__MODULE__.t(), map()) :: __MODULE__.t()
   def put_custom_variables(email, custom_variables) do
     %__MODULE__{email | custom_variables: custom_variables}
+  end
+
+  @doc """
+  Puts headers to the email struct.
+
+  An object containing key/value pairs of header names and the value to
+  substitute for them. The key/value pairs must be strings. You must ensure
+  these are properly encoded if they contain unicode characters. These headers
+  cannot be one of the reserved headers.
+
+  ## Examples
+    iex> Mailtrap.Email.put_headers(%Mailtrap.Email{}, %{"X-Custom-Header" => "header-value"})
+    %Mailtrap.Email{headers: %{"X-Custom-Header" => "header-value"}}
+  """
+  @spec put_headers(__MODULE__.t(), map()) :: __MODULE__.t()
+  def put_headers(email, headers) do
+    %__MODULE__{email | headers: headers}
   end
 
   @doc """
@@ -168,9 +179,29 @@ defmodule Mailtrap.Email do
     mailboxes = Enum.map(list, fn {name, address} -> Mailbox.build(name, address) end)
     %__MODULE__{email | bcc: mailboxes}
   end
+
+  @doc """
+  Puts attachments struct to the email struct
+
+  ## Examples
+    iex> attachment = Mailtrap.Email.Attachment.build("content", "filename")
+    iex> Mailtrap.Email.put_attachments(%Mailtrap.Email{}, [attachment])
+    %Mailtrap.Email{
+      attachments: [
+        %Mailtrap.Email.Attachment{
+          filename: "filename",
+          content: "Y29udGVudA=="
+        }
+      ]
+    }
+  """
+  @spec put_attachments(__MODULE__.t(), [Attachment.t(), ...]) :: __MODULE__.t()
+  def put_attachments(email, attachments) do
+    %__MODULE__{email | attachments: attachments}
+  end
 end
 
-defimpl Jason.Encoder, for: [Mailtrap.Email] do
+defimpl Jason.Encoder, for: [Mailtrap.Email, Mailtrap.Email.Mailbox, Mailtrap.Email.Attachment] do
   def encode(struct, opts) do
     struct
     |> Map.from_struct()
