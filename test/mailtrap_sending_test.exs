@@ -1,4 +1,4 @@
-defmodule MailtrapSendingTest do
+defmodule Mailtrap.SendingTest do
   use ExUnit.Case
   # import Mailtrap.Factory
   import Tesla.Mock
@@ -34,9 +34,9 @@ defmodule MailtrapSendingTest do
     response =
       %Email{}
       |> Email.put_subject("Hello")
-      |> Email.put_from("John Doe", "john.doe@example.com")
-      |> Email.put_to("Jane Doe", "jane.doe@example.com")
-      |> Email.put_cc("Alice", "alice@example.com")
+      |> Email.put_from({"John Doe", "john.doe@example.com"})
+      |> Email.put_to({"Jane Doe", "jane.doe@example.com"})
+      |> Email.put_cc({"Alice", "alice@example.com"})
       |> Email.put_text("Hello")
       |> Email.put_html("<strong>Hello</strong>")
       |> Mailtrap.Sending.send()

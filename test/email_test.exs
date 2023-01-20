@@ -1,4 +1,4 @@
-defmodule MailtrapEmailTest do
+defmodule Mailtrap.EmailTest do
   use ExUnit.Case
 
   doctest Mailtrap.Email

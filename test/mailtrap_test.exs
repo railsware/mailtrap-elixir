@@ -1,4 +1,4 @@
-defmodule MailtrapTest do
+defmodule Mailtrap.APITest do
   use ExUnit.Case
   import Tesla.Mock
 

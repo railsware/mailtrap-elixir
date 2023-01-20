@@ -6,21 +6,25 @@ defmodule Mailtrap.Email do
   alias Mailtrap.Email.Mailbox
   alias Mailtrap.Email.Attachment
 
+  @type address :: {String.t(), String.t()}
+  @type address_list :: nil | address | [address] | any
+
   @type t :: %__MODULE__{
-          subject: String.t(),
-          text: String.t() | nil,
-          html: String.t() | nil,
-          from: Mailbox.t(),
-          to: [Mailbox.t(), ...],
-          cc: [Mailbox.t(), ...],
-          bcc: [Mailbox.t(), ...],
-          category: String.t() | nil,
-          custom_variables: map() | nil,
-          headers: map() | nil,
-          attachments: [Attachment.t(), ...]
+          attachments: nil | [Attachment.t(), ...],
+          bcc: nil | [Mailbox.t(), ...],
+          category: nil | String.t(),
+          cc: nil | [Mailbox.t(), ...],
+          custom_variables: nil | map(),
+          from: nil | Mailbox.t(),
+          headers: nil | map(),
+          html: nil | String.t(),
+          subject: nil | String.t(),
+          text: nil | String.t(),
+          to: nil | [Mailbox.t(), ...]
         }
 
-  defstruct from: nil,
+  defstruct attachments: nil,
+            from: nil,
             to: nil,
             cc: nil,
             bcc: nil,
@@ -29,8 +33,7 @@ defmodule Mailtrap.Email do
             html: nil,
             category: nil,
             custom_variables: nil,
-            headers: nil,
-            attachments: nil
+            headers: nil
 
   @doc """
   Puts subject to the email struct
@@ -115,27 +118,31 @@ defmodule Mailtrap.Email do
   Puts from field to the email
 
   ## Examples
-    iex> Mailtrap.Email.put_from(%Mailtrap.Email{}, "Jane", "jane.doe@example.org")
+    iex> Mailtrap.Email.put_from(%Mailtrap.Email{}, {"Jane", "jane.doe@example.org"})
     %Mailtrap.Email{from: %Mailtrap.Email.Mailbox{name: "Jane", email: "jane.doe@example.org"}}
   """
-  @spec put_from(__MODULE__.t(), String.t() | nil, String.t()) :: __MODULE__.t()
-  def put_from(email, name, address) do
+  @spec put_from(__MODULE__.t(), {nil | String.t(), String.t()}) :: __MODULE__.t()
+  def put_from(email, {name, address}) do
     %__MODULE__{email | from: Mailbox.build(name, address)}
+  end
+
+  def put_from(email, address) do
+    %__MODULE__{email | from: Mailbox.build(nil, address)}
   end
 
   @doc """
   Puts recepient or list of recepients to the email struct
 
   ## Examples
-    iex> Mailtrap.Email.put_to(%Mailtrap.Email{}, "Jane", "jane.doe@example.org")
+    iex> Mailtrap.Email.put_to(%Mailtrap.Email{}, {"Jane", "jane.doe@example.org"})
     %Mailtrap.Email{to: [%Mailtrap.Email.Mailbox{name: "Jane", email: "jane.doe@example.org"}]}
 
     iex> Mailtrap.Email.put_to(%Mailtrap.Email{}, [{"Jane", "jane.doe@example.org"}, {"John", "john.doe@example.org"}])
     %Mailtrap.Email{to: [%Mailtrap.Email.Mailbox{name: "Jane", email: "jane.doe@example.org"}, %Mailtrap.Email.Mailbox{name: "John", email: "john.doe@example.org"}]}
   """
-  @spec put_to(__MODULE__.t(), String.t() | nil, String.t()) :: __MODULE__.t()
+  @spec put_to(__MODULE__.t(), {String.t() | nil, String.t()}) :: __MODULE__.t()
   @spec put_to(__MODULE__.t(), [tuple(), ...]) :: __MODULE__.t()
-  def put_to(email, name, address), do: put_to(email, [{name, address}])
+  def put_to(email, {name, address}), do: put_to(email, [{name, address}])
 
   def put_to(email, list) do
     mailboxes = Enum.map(list, fn {name, address} -> Mailbox.build(name, address) end)
@@ -146,15 +153,15 @@ defmodule Mailtrap.Email do
   Puts carbon copy recepient or list of carbon copy recepients to the email struct
 
   ## Examples
-    iex> Mailtrap.Email.put_cc(%Mailtrap.Email{}, "Jane", "jane.doe@example.org")
+    iex> Mailtrap.Email.put_cc(%Mailtrap.Email{}, {"Jane", "jane.doe@example.org"})
     %Mailtrap.Email{cc: [%Mailtrap.Email.Mailbox{name: "Jane", email: "jane.doe@example.org"}]}
 
     iex> Mailtrap.Email.put_cc(%Mailtrap.Email{}, [{"Jane", "jane.doe@example.org"}, {"John", "john.doe@example.org"}])
     %Mailtrap.Email{cc: [%Mailtrap.Email.Mailbox{name: "Jane", email: "jane.doe@example.org"}, %Mailtrap.Email.Mailbox{name: "John", email: "john.doe@example.org"}]}
   """
-  @spec put_cc(__MODULE__.t(), String.t() | nil, String.t()) :: __MODULE__.t()
+  @spec put_cc(__MODULE__.t(), {String.t() | nil, String.t()}) :: __MODULE__.t()
   @spec put_cc(__MODULE__.t(), [tuple(), ...]) :: __MODULE__.t()
-  def put_cc(email, name, address), do: put_cc(email, [{name, address}])
+  def put_cc(email, {name, address}), do: put_cc(email, [{name, address}])
 
   def put_cc(email, list) do
     mailboxes = Enum.map(list, fn {name, address} -> Mailbox.build(name, address) end)
@@ -165,15 +172,15 @@ defmodule Mailtrap.Email do
   Puts blind carbon copy recepient or list of blind carbon copy recepients to the email struct
 
   ## Examples
-    iex> Mailtrap.Email.put_bcc(%Mailtrap.Email{}, "Jane", "jane.doe@example.org")
+    iex> Mailtrap.Email.put_bcc(%Mailtrap.Email{}, {"Jane", "jane.doe@example.org"})
     %Mailtrap.Email{bcc: [%Mailtrap.Email.Mailbox{name: "Jane", email: "jane.doe@example.org"}]}
 
     iex> Mailtrap.Email.put_bcc(%Mailtrap.Email{}, [{"Jane", "jane.doe@example.org"}, {"John", "john.doe@example.org"}])
     %Mailtrap.Email{bcc: [%Mailtrap.Email.Mailbox{name: "Jane", email: "jane.doe@example.org"}, %Mailtrap.Email.Mailbox{name: "John", email: "john.doe@example.org"}]}
   """
-  @spec put_bcc(__MODULE__.t(), String.t() | nil, String.t()) :: __MODULE__.t()
+  @spec put_bcc(__MODULE__.t(), {String.t() | nil, String.t()}) :: __MODULE__.t()
   @spec put_bcc(__MODULE__.t(), [tuple(), ...]) :: __MODULE__.t()
-  def put_bcc(email, name, address), do: put_bcc(email, [{name, address}])
+  def put_bcc(email, {name, address}), do: put_bcc(email, [{name, address}])
 
   def put_bcc(email, list) do
     mailboxes = Enum.map(list, fn {name, address} -> Mailbox.build(name, address) end)

@@ -7,8 +7,8 @@ defmodule Mailtrap.Email.Mailbox do
   """
 
   @type t :: %__MODULE__{
-          name: String.t() | nil,
-          email: String.t()
+          name: nil | String.t() | nil,
+          email: nil | String.t() | any
         }
 
   defstruct name: nil,
@@ -33,15 +33,5 @@ defmodule Mailtrap.Email.Mailbox do
 
   def build(name, address) do
     %__MODULE__{email: address, name: name}
-  end
-end
-
-defimpl Jason.Encoder, for: [Mailtrap.Email.Mailbox] do
-  def encode(struct, opts) do
-    struct
-    |> Map.from_struct()
-    |> Enum.map(& &1)
-    |> Enum.filter(fn {_k, v} -> !is_nil(v) end)
-    |> Jason.Encode.keyword(opts)
   end
 end

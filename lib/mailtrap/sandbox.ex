@@ -15,18 +15,27 @@ defmodule Mailtrap.Sandbox do
     |> Mailtrap.Sandbox.send(111) # 111 is inbox id
   """
 
-  use Tesla
+  @doc """
+  Generates client
+  """
+  @spec client(String.t()) :: Tesla.Client.t()
+  def client(token) do
+    middleware = [
+      Mailtrap.DirectResponse,
+      Tesla.Middleware.JSON,
+      {Tesla.Middleware.BaseUrl, "https://sandbox.api.mailtrap.io/api"},
+      {Tesla.Middleware.BearerAuth, token: token}
+    ]
 
-  plug(Mailtrap.DirectResponse)
-  plug(Tesla.Middleware.JSON)
-  plug(Tesla.Middleware.BaseUrl, "https://sandbox.api.mailtrap.io/api")
-  plug(Tesla.Middleware.BearerAuth, token: Application.get_env(:mailtrap, :api_token))
+    Tesla.client(middleware)
+  end
 
   @doc """
   Sends an email to sandbox inbox
   """
-  @spec send(Mailtrap.Email.t(), integer()) :: {:ok, map()} | {:error, Tesla.Env.t()}
-  def send(email, inbox_id) do
-    post("send/" <> Integer.to_string(inbox_id), email)
+  @spec send(Tesla.Client.t(), Mailtrap.Email.t(), integer()) ::
+          {:ok, map()} | {:error, Tesla.Env.t()}
+  def send(client, email, inbox_id) do
+    Tesla.post(client, "send/" <> Integer.to_string(inbox_id), email)
   end
 end

@@ -1,4 +1,4 @@
-defmodule MailtrapAttachementTest do
+defmodule Mailtrap.AttachementTest do
   use ExUnit.Case
 
   doctest Mailtrap.Email.Attachment
