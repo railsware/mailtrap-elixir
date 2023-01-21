@@ -27,7 +27,7 @@ defmodule Bamboo.MailtrapHelper do
       attachments,
       fn attachment ->
         mailtrap_attachment =
-          Mailtrap.Email.Attachment.build(attachment.data, attachments.filename)
+          Mailtrap.Email.Attachment.build(attachment.data, attachment.filename)
 
         Mailtrap.Email.Attachment.put_content_id(mailtrap_attachment, attachment.content_id)
       end
