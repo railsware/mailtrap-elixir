@@ -1,4 +1,8 @@
 defmodule Mailtrap.BambooTestHelper do
+  @moduledoc """
+  Test helper module
+  """
+
   alias Bamboo.{Email, Mailer}
 
   @doc false

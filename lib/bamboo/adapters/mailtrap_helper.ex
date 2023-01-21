@@ -1,4 +1,8 @@
 defmodule Bamboo.MailtrapHelper do
+  @moduledoc """
+  Helper module for Sandbox and Sending adapters
+  """
+
   alias Mailtrap.Email
 
   def build_from_bamboo_email(bamboo_email) do

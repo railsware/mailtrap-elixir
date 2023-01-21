@@ -4,7 +4,7 @@ defmodule Bamboo.MailtrapSandboxAdapterTest do
   import Mailtrap.BambooTestHelper
   alias Bamboo.MailtrapSandboxAdapter
 
-  def api_configs, do: %{api_token: "api_token", inbox_id: 11111}
+  def api_configs, do: %{api_token: "api_token", inbox_id: 111}
 
   test "happy path" do
     expected_request_body =
@@ -28,7 +28,7 @@ defmodule Bamboo.MailtrapSandboxAdapterTest do
           {"content-type", "application/json"},
           {"authorization", "Bearer api_token"}
         ],
-        url: "https://sandbox.api.mailtrap.io/api/send/11111"
+        url: "https://sandbox.api.mailtrap.io/api/send/111"
       } ->
         json(%{success: true, message_ids: [1]}, status: 200)
     end)
@@ -38,7 +38,7 @@ defmodule Bamboo.MailtrapSandboxAdapterTest do
 
   test "returns error" do
     mock(fn
-      %{method: :post, url: "https://sandbox.api.mailtrap.io/api/send/11111"} ->
+      %{method: :post, url: "https://sandbox.api.mailtrap.io/api/send/111"} ->
         json(%{error: "Incorrect API token"}, status: 401)
     end)
 
