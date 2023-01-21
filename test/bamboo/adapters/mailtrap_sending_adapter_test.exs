@@ -1,10 +1,10 @@
-defmodule Bamboo.MailtrapSandboxAdapterTest do
+defmodule Bamboo.MailtrapSendingAdapterTest do
   use ExUnit.Case
   import Tesla.Mock
   import Mailtrap.BambooTestHelper
-  alias Bamboo.MailtrapSandboxAdapter
+  alias Bamboo.MailtrapSendingAdapter
 
-  def api_configs, do: %{api_token: "api_token", inbox_id: 11111}
+  def api_configs, do: %{api_token: "api_token"}
 
   test "happy path" do
     expected_request_body =
@@ -28,20 +28,20 @@ defmodule Bamboo.MailtrapSandboxAdapterTest do
           {"content-type", "application/json"},
           {"authorization", "Bearer api_token"}
         ],
-        url: "https://sandbox.api.mailtrap.io/api/send/11111"
+        url: "https://send.api.mailtrap.io/api/send"
       } ->
         json(%{success: true, message_ids: [1]}, status: 200)
     end)
 
-    assert {:ok, _} = MailtrapSandboxAdapter.deliver(new_email(), api_configs())
+    assert {:ok, _} = MailtrapSendingAdapter.deliver(new_email(), api_configs())
   end
 
   test "returns error" do
     mock(fn
-      %{method: :post, url: "https://sandbox.api.mailtrap.io/api/send/11111"} ->
+      %{method: :post, url: "https://send.api.mailtrap.io/api/send"} ->
         json(%{error: "Incorrect API token"}, status: 401)
     end)
 
-    assert {:error, _} = MailtrapSandboxAdapter.deliver(new_email(), api_configs())
+    assert {:error, _} = MailtrapSendingAdapter.deliver(new_email(), api_configs())
   end
 end

@@ -11,7 +11,8 @@ defmodule Mailtrap.SendingTest do
     end)
 
     message = %Mailtrap.Email{}
-    assert {:error, %Tesla.Env{status: 401, body: body}} = Mailtrap.Sending.send(message)
+    client = Mailtrap.Sending.client("api_token")
+    assert {:error, %Tesla.Env{status: 401, body: body}} = Mailtrap.Sending.send(client, message)
     assert %{"error" => "Incorrect API token"} == body
   end
 
@@ -31,7 +32,7 @@ defmodule Mailtrap.SendingTest do
         json(%{success: true, message_ids: ["1", "2"]})
     end)
 
-    response =
+    message =
       %Email{}
       |> Email.put_subject("Hello")
       |> Email.put_from({"John Doe", "john.doe@example.com"})
@@ -39,7 +40,9 @@ defmodule Mailtrap.SendingTest do
       |> Email.put_cc({"Alice", "alice@example.com"})
       |> Email.put_text("Hello")
       |> Email.put_html("<strong>Hello</strong>")
-      |> Mailtrap.Sending.send()
+
+    client = Mailtrap.Sending.client("api_token")
+    response = Mailtrap.Sending.send(client, message)
 
     assert {:ok, %{"message_ids" => ["1", "2"], "success" => true}} = response
   end
