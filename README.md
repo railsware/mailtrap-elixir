@@ -24,64 +24,76 @@ end
 
 For direct usage of API
 
-    config :mailtrap,
-      api_token: "PASTE TOKEN HERE"
+```elixir
+config :mailtrap,
+  api_token: "PASTE TOKEN HERE"
+```
 
 For Mailtrap Sandbox Bamboo adapter
 
-    config :test_mailtrap, TestMailtrap.Mailer,
-      adapter: Bamboo.MailtrapSandboxAdapter,
-      api_token: "PASTE TOKEN HERE",
-      inbox_id: 111 # replace with your inbox id
+```elixir
+config :test_mailtrap, TestMailtrap.Mailer,
+  adapter: Bamboo.MailtrapSandboxAdapter,
+  api_token: "PASTE TOKEN HERE",
+  inbox_id: 111 # replace with your inbox id
+```
 
 For Mailtrap Sending Bamboo adapter
 
-    config :test_mailtrap, TestMailtrap.Mailer,
-      adapter: Bamboo.MailtrapSendingAdapter,
-      api_token: "PASTE TOKEN HERE"
+```elixir
+config :test_mailtrap, TestMailtrap.Mailer,
+  adapter: Bamboo.MailtrapSendingAdapter,
+  api_token: "PASTE TOKEN HERE"
+```
 
 ## Usage
 
 Sending to Mailtrap Sandbox API
 
-    client = Mailtrap.Sandbox.client("PASTE TOKEN HERE")
-    email = (%Mailtrap.Email{}
-      |> Mailtrap.Email.put_from({"From name", "from@example.com"})
-      |> Mailtrap.Email.put_to({"Recepient", "recepient@example.com"})
-      |> Mailtrap.Email.put_subject("Hi there")
-      |> Mailtrap.Email.put_text("General Kenobi"))
-    Mailtrap.Sandbox.send(client, email, 111) # replace 111 with your inbox id
+```elixir
+client = Mailtrap.Sandbox.client("PASTE TOKEN HERE")
+email = (%Mailtrap.Email{}
+  |> Mailtrap.Email.put_from({"From name", "from@example.com"})
+  |> Mailtrap.Email.put_to({"Recepient", "recepient@example.com"})
+  |> Mailtrap.Email.put_subject("Hi there")
+  |> Mailtrap.Email.put_text("General Kenobi"))
+Mailtrap.Sandbox.send(client, email, 111) # replace 111 with your inbox id
+```
 
 Sending via Mailtrap Sending API
 
-    client = Mailtrap.Sending.client("PASTE TOKEN HERE")
-    email = (%Mailtrap.Email{}
-      |> Mailtrap.Email.put_from({"From name", "from@example.com"})
-      |> Mailtrap.Email.put_to({"Recepient", "recepient@example.com"})
-      |> Mailtrap.Email.put_subject("Hi there")
-      |> Mailtrap.Email.put_text("General Kenobi"))
-    Mailtrap.Sending.send(client, email)
+```elixir
+client = Mailtrap.Sending.client("PASTE TOKEN HERE")
+email = (%Mailtrap.Email{}
+  |> Mailtrap.Email.put_from({"From name", "from@example.com"})
+  |> Mailtrap.Email.put_to({"Recepient", "recepient@example.com"})
+  |> Mailtrap.Email.put_subject("Hi there")
+  |> Mailtrap.Email.put_text("General Kenobi"))
+Mailtrap.Sending.send(client, email)
+```
 
 ### Bamboo adapter
 
-    # mailer module
-    defmodule TestMailtrap.Mailer do
-      use Bamboo.Mailer, otp_app: :test_mailtrap
-    end
+```elixir
+# mailer module
+defmodule TestMailtrap.Mailer do
+  use Bamboo.Mailer, otp_app: :test_mailtrap
+end
 
-    # generate email
-    def welcome_email(subject \\ "Hi there", friendly_name \\ "Recepient", to \\ "recepient@example.com") do
-      new_email(
-        to: {friendly_name, to},
-        from: {"From", "from@example.com"},
-        subject: subject,
-        html_body: "<strong>Thanks for joining!</strong>",
-        text_body: "Thanks for joining!"
-      )
-    end
+# generate email
+def welcome_email(subject \\ "Hi there", friendly_name \\ "Recepient", to \\ "recepient@example.com") do
+  new_email(
+    to: {friendly_name, to},
+    from: {"From", "from@example.com"},
+    subject: subject,
+    html_body: "<strong>Thanks for joining!</strong>",
+    text_body: "Thanks for joining!"
+  )
+end
 
-    # send
-    welcome_email() |> TestMailtrap.Mailer.deliver_now()
+# send
+welcome_email() |> TestMailtrap.Mailer.deliver_now()
+```
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
