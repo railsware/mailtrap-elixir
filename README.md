@@ -22,13 +22,6 @@ end
 
 ## Configuration
 
-For direct usage of API
-
-```elixir
-config :mailtrap,
-  api_token: "PASTE TOKEN HERE"
-```
-
 For Mailtrap Sandbox Bamboo adapter
 
 ```elixir
@@ -47,6 +40,15 @@ config :test_mailtrap, TestMailtrap.Mailer,
 ```
 
 ## Usage
+
+Mailtrap API
+
+```elixir
+  client = Mailtrap.client("PASTE TOKEN HERE")
+  accounts = Mailtrap.get(client, "accounts")
+  # or
+  Mailtrap.delete(client, "accounts/" <> account_id <> "/account_accesses/" <> account_access_id)
+```
 
 Sending to Mailtrap Sandbox API
 
