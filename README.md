@@ -103,6 +103,6 @@ be found at <https://hexdocs.pm/mailtrap>.
 
 ## Copyright and License
 
-Copyright (c) 2023 Kalys Osmonov
+Copyright (c) 2023 Railsware Products Studio LLC
 
 This library is released under the MIT License. See the [LICENSE.md](./LICENSE.md) file.
