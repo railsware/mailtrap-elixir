@@ -36,10 +36,10 @@ defmodule Mailtrap.MixProject do
 
   defp package do
     [
-      description: "Mailtrap Sandbox and Sending API client. Mailtrap adapter for Bamboo",
-      maintainers: ["Kalys Osmonov <kalys@osmonov.com>"],
+      description: "Official mailtrap.io API clients. Bamboo adapters for mailtrap.io Sandbox and Sending",
+      maintainers: ["Railsware Products Studio LLC <support@mailtrap.io>"],
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/kalys/mailtrap"}
+      links: %{"GitHub" => "https://github.com/railsware/mailtrap-elixir"}
     ]
   end
 
